@@ -1,102 +1,98 @@
-% Main page
+% Main page of M-Signals documentation
 %
-% @mainpage M-Signals - Механизм "Signals and Slots" для MATLAB
+% @mainpage M-Signals - Mechanism "Signals and Slots" for MATLAB
 %
-% Введение
-% --------
-% M-Signals - это реализация шаблона проектирования "Наблюдатель",
-% спроектированная в виде механизма, известного как
-% <a href="http://en.wikipedia.org/wiki/Signals_and_slots">Signals and Slots</a>.
+%
+% Introduction
+% ------------
+%   M-Signals is the implementation of the "Observer" pattern designed as
+%   <a href="http://en.wikipedia.org/wiki/Signals_and_slots">Signals and Slots</a>.
 % 
-% Данный подход основывается на том, что существуют классы сигналов и
-% слотов (приёмников). Может быть создано неограниченное количество 
-% экземпляров этих классов. К одному сигналу может быть подключено неограниченное
-% количество приёмников, а также каждый приёмник может принимать несколько
-% сигналов (может быть подключен к нескольким сигналам).
-% При испускании, сигналы могут передавать какие-либо данные (аргументы),
-% ассоциированные с этими сигналами.
+%   This approach is based on signals and slots or receivers' classes. 
+%   It is possible to create the unlimited number of class instances.
+%   Each signal can be connected to the unlimited number of receivers, and 
+%   each receiver can receive several signals (the receiver can be connected 
+%   to the unlimited number of signals).
+%   When signals are emitted, they can transmit(arguments) associated with them. 
 %
-% Такой механизм является очень гибким при разработке объектно-ориентированных 
-% программ. Он позволяет связывать различные объекты, которые ничего не 
-% знают друг о друге.
+%   This mechanism is considered to be flexible in the object-oriented program 
+%   development and design. It allows binding of different objects without the 
+%   objects knowing anything about each other.
 %
-% Реализация шаблона "Наблюдатель" с использованием механизма сигналов и
-% слотов позволяет минимизировать количество повторяющегося кода, уменьшить
-% модульную связанность. "Сигналы и слоты" хорошо подходят для реализации
-% логики программ с графическим интерфейсом пользователя (GUI), а также при
-% проектировании программ со слабосвязанной модульной архитектурой.
+%   The implementation of the "Observer" pattern with signals-slots mechanism 
+%   allows to minimize the repetitive code and reduce module coupling. 
+%   "Signals and slots" are well-suited not only for the implementation of 
+%   program logic with the Graphical User Interface (GUI), but also for 
+%   program design with loose coupling between modules. 
 %
 %
-% Основные возможности и особенности M-Signals
-% --------------------------------------------
-%   - Сигналы могут быть анонимные или иметь конкретного отправителя
-%   - Аргументы сигнала могут быть типизированные и нетипизированные
-%   - Сигналы в классе отправителя могут быть автоматически созданы из событий
-%   - Сигнал может испускаться через генерацию события, либо напрямую
-%   - Гибкая обработка исключений, возникающих в слотах с выводом подробной
-%     информации об исключении
-%   - API классов подобное используемому в библиотеке Qt, которое
-%     нагляднее и удобнее чем API механизма событий MATLAB
-%   - Сигналы, имеющие отправителя, могут быть заблокированы на уровне
-%     отправителя
-%   - Каждый сигнал может быть включен и отключен индивидуально
-%   - Каждый приёмник может быть включен и отключен индивидуально
+% Key features of M-Signals
+% -------------------------
+%   - Signals can be anonymous or have a particular sender
+%   - Signals' arguments can be passed as typed or untyped arguments.
+%   - Signals in sender's class can be automatically created from the events
+%   - Signal can be emitted directly or through the event notification
+%   - Flexible exception handling in slots includes the detailed exception output.
+%   - API classes, similar to API classes in Qt library, 
+%     are more visual and convenient than the event mechanism in MATLAB API
+%   - Non-anonymous signals can be blocked by a sender
+%   - Each signal can be enabled and disabled individually
+%   - Each receiver can be enabled and disabled individually.
 %
 %
 % Signal
 % ------
-%   Класс Signal реализует функциональность сигнала. В реализации M-Signals
-%   cигналы могут быть анонимными или иметь отправителя. Отправителем
-%   сигнала могут являться только классы, наследуемые от класса Sender.
+%   Class Signal implements signal functionality. In M-Signals implementation
+%   signals can be anonymous or have a sender. Only classes inherited from 
+%   class Sender can send signals.  
 %   
-%   Сигнал может испускаться без аргументов, с любым количеством любых 
-%   аргументов, либо с обязательными аргументами явно указанного типа.
-%   Контроль типов испускаемых аргументов может быть полезен в некоторых
-%   случаях.
+%   Signal can be emitted without any arguments, or with any number of 
+%   arguments, or if there are mandatory specified arguments.
+%   In some cases it is useful to control the emitted arguments.
 %   
-%   Сигнал может испускаться, используя механизм событий MATLAB
-%   (генерировать событие), либо может испускаться, минуя механизм событий,
-%   напрямую вызывая Callback-функции слотов.
+%   It is possible to emit a signal, using MATLAB event mechanism 
+%   (event notification) or bypassing the event mechanism and directly 
+%   calling Callback function of slots. 
 %
 %
 % Receiver
 % --------
-%   Класс Receiver реализует функциональность слота (приёмника).
-%   Один приёмник может принимать несколько сигналов. Если
-%   Callback-функция приёмника принимает меньшее количество аргументов, чем
-%   испускает сигнал, то лишние аргументы будут проигнорированы.
+%   Class Receiver implements slot (receiver) functionality. 
+%   Receiver is able to receive several signals. If the callback-function 
+%   receives fewer arguments than the signal emits, extra arguments are 
+%   simply ignored. 
 %
-%   Данная сущность добавлена в M-Signals для удобства и контроля, а также,
-%   потому что в MATLAB указатели на функции не являются объектами, и
-%   работа с ними не вписывается в парадигму объектно-ориентированного
-%   программирования.
+%   This entity has been added to M-Signals to ensure convenience and 
+%   provide control. 
+%   This entity has been added to M-Signals, because MATLAB function handles 
+%   are not objects and the work with them does not fit in paradigm
+%   of object-oriented programming.
 %
 %
 % Sender
 % ------
-%   Класс Sender реализует функциональность отправителя сигналов. Класс
-%   реализует некоторые методы и определённое поведение. Любой класс,
-%   который наследуется от класса Sender может являться отправителем
-%   сигналов.
+%   Class Sender implements sender functionality. Class implements some 
+%   methods and a specific type of behavior. Any class inherited from 
+%   Sender class is considered to be a sender of signals.
 %
-%   Класс Sender добавляет следующие возможности к ссылочным классам MATLAB:
-%   - Динамическое добавление и удаление сигналов. Сигналы добавляются 
-%     как динамические поля (Dynamic properties).
-%   - Создание сигналов из событий. События класса могут быть отображены в
-%     сигналы и добавлены в объект отправителя.
-%   - Контроль сигналов. Сигналы могут быть заблокированы и разблокированы
-%     на уровне отправителя.
+%   Class Sender adds the following options to the MATLAB handle classes:
+%   - Dynamic addition and removal of signals. Signals are added 
+%     as dynamic fields (Dynamic properties).
+%   - Event-driven signals. The events of a class can be converted into
+%     signals and added to sender's object as dynamic properties.
+%   - Signal control. Signals can be blocked and unblocked by a sender.
 %
 %
 % ErrorHandler
 % ------------
-%   Класс для обработки исключений, происходящих в приёмниках при генерации
-%   сигналов. Определяет метод process, который вызывается всякий раз при 
-%   возникновении исключения. Классы Signal и Receiver могут использовать
-%   экземпляры ErrorHandler независимо.
-%   Для обработки исключений необходимо создавать пользовательские классы,
-%   наследуемые от ErrorHandler и задавать их экземпляры в сигналах или
-%   приёмниках.
+%   Class enables the exceptions handling, occurring in the receivers 
+%   during signals generation. It defines the method "process" that is called 
+%   if the exception appears. Classes Signal and Receiver can use
+%   ErrorHandler instances independently.
+%
+%   For exception handling it is necessary to create user classes inherited 
+%   from ErrorHandler, override and implement the method "process" and assign 
+%   instances for signals or receivers.
 %
 %
 % @authors Evgeny Prilepin <esp.home@gmail.com>
