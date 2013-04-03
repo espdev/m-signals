@@ -99,3 +99,6 @@
 %
 % @copyright 2011-2013 Evgeny Prilepin
 %
+%
+% @example UicontrolOnSignals.m
+%
