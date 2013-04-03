@@ -303,11 +303,25 @@ classdef Signal < handle
                 prop = sender.findprop(name);
                 
                 if isempty(prop)
+                    % Если поля нет, добавляем и устанавливаем в его 
+                    % значение сигнал.
                     self.senderProp = sender.addprop(name);
+                    sender.(name) = self;
                 else
-                    self.senderProp = prop;
+                    % Если поле уже есть, то генерируем исключение если это
+                    % поле не является нашим сигналом. Нельзя создавать
+                    % сигналы с именами уже существующих полей в сендере.
+                    tf = eq(sender.(name), self);
+                    
+                    if (isempty(tf) || eq(tf, false))
+                        error('signals:signalCreateFailed', ...
+                            ['Unable to create signal with name "%s". ', ...
+                            'This name already exist in Sender "%s".'], ...
+                            name, class(sender));
+                    else
+                        self.senderProp = prop;
+                    end
                 end
-                sender.(name) = self;
             end
         end
         
