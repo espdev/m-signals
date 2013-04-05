@@ -1,4 +1,4 @@
-classdef UicontrolOnSignals < hgsetget & signals.Sender
+classdef UicontrolOnSignals < signals.Sender
     % Класс реализует uicontrol с использованием сигналов
     %
     % Description:
@@ -71,22 +71,27 @@ classdef UicontrolOnSignals < hgsetget & signals.Sender
             self.Delete.connect(@() delete(self))
         end
         
+    end
+    
+    
+    methods (Sealed)
+        
         function varargout = get(self, varargin)
             % HG Getter
-            if (nargout > 0)
-                varargout{1} = get(self.UHandle, varargin{:});
+            if (nargout == 0)
+                get(self.UHandle, varargin{:});
             else
-                if (nargin < 2)
-                    get(self.UHandle, varargin{:});
-                else
-                    varargout{1} = get(self.UHandle, varargin{:});
-                end
+                varargout{:} = get(self.UHandle, varargin{:});
             end
         end
         
-        function set(self, varargin)
+        function varargout = set(self, varargin)
             % HG Setter
-            set(self.UHandle, varargin{:});
+            if (nargout == 0)
+                set(self.UHandle, varargin{:});
+            else
+                varargout{:} = set(self.UHandle, varargin{:});
+            end
         end
         
     end
