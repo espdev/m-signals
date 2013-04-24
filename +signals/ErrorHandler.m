@@ -1,43 +1,46 @@
 classdef ErrorHandler < handle
-    % Обработчик исключений при использовании сигналов
+    % Exception handling in signals and receivers
     %
-    % Класс содержит метод process для обработки исключений при
-    % использовании сигналов.
+    % Class contains method "process" for exception handling in signals and
+    % receivers.
     %
-    % По умочланию ничего не делает. Метод process должен быть
-    % переопределён в наследуемом классе.
+    % Method "process" does nothing, by default. Method "process"
+    % shall be redefined in the inherited user class.
     %
     
     % ---------------------------------------------------------------------
-    %   Проект    : M-Signals
-    %   Версия    : 1.0
-    %   Автор     : Евгений Прилепин
-    %   Создано   : 31.03.11
-    %   Обновлено : 31.03.13
+    % Project    : M-Signals
+    % Version    : 1.0
+    % Author     : Evgeny Prilepin 
+    % Created    : 31.03.11
+    % Updated    : 31.03.13
     %
-    %   Copyright : (C) 2011-2013 Евгений Прилепин
+    % Copyright : (C) 2011-2013 Evgeny Prilepin 
     % ---------------------------------------------------------------------
     
     
     methods (Access = {?signals.Signal, ?signals.Receiver})
         
         function process(self, exception, signal, receiver) %#ok<INUSD>
-            % Выполняет обработку исключения в сигнале или приёмнике
+            % Handles an exception in the signal and receiver 
             %
-            % Метод вызывается каждый раз, когда происходит исключение в
-            % приёмнике при генерации сигнала.
+            % The exception occurred during the signal generation, the 
+            % method is called.
             %
-            % Использование::
+            % Usage::
             % @code
             % errorHandler.process(exception, signal, receiver)
             % @endcode
             %
             % Parameters:
-            %   exception: Объект исключения. Экземпляр MException
-            %   signal:    Объект сигнала, генерация которого привела к
-            %              исключению в приёмнике
-            %   receiver:  Объект приёмника, в котором произошло исключение
+            %   exception: Exception object. Instance MException
+            %   signal:    Signal object. The generation of a signal
+            %              object has led to the exception occurred in the
+            %              receiver
+            %   receiver:  Receiver object. The exception has occurred in
+            %              the receiver object
             %
+
             
         end
         

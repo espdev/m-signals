@@ -1,19 +1,19 @@
 classdef Sender < dynamicprops
-    % Класс реализует функциональность отправителя сигналов
+    % Class implements signal sender functionality.
     %
-    % Класс реализует функциональность отправителя сигналов.
+    % Class implements signal sender functionality.
     % @n
-    % Если в классе-наследнике данного класса есть поля, которые содержат 
-    % ссылки на сигналы, они будут считаться сигналами отправителя, и с ними
-    % можно будет производить какие-либо действия, например, 
-    % блокировать/разблокировать сигналы централизованно, назначать единого
-    % обработчика исключений и т.д.
-    % В объекте класса наследника Sender можно динамически создавать и удалять
-    % сигналы.
+    % If in the subclass there are any signals, 
+    % these signals will be regarded as 
+    % sender signals on which it is possible to perform actions like 
+    % blocking/unblocking signals centrally, 
+    % assigning unified exception handler, and etc.  
+    % In the Sender class instance it is possible to create or delete 
+    % signals dynamically. 
     %
-    % Использование::
+    % Usage::
     % @code
-    % % Определение класса, наследующегося от handle с примесью Sender
+    % % Defining class inherited from "handle" with Sender mixin
     % classdef TestSignals < handle & signals.Sender
     %     
     %     properties (GetAccess = public, SetAccess = private)
@@ -36,7 +36,7 @@ classdef Sender < dynamicprops
     %     end
     % end
     %
-    % % Использование сигналов
+    % % Signal usage
     % test = TestSignals()
     %
     % signals(test)
@@ -50,22 +50,23 @@ classdef Sender < dynamicprops
     %
     
     % ---------------------------------------------------------------------
-    %   Проект    : M-Signals
-    %   Версия    : 1.0
-    %   Автор     : Евгений Прилепин
-    %   Создано   : 27.12.11
-    %   Обновлено : 31.03.13
+    % Project   : M-Signals
+    % Version   : 1.0
+    % Author    : Evgeny Prilepin 
+    % Created   : 27.12.11
+    % Updated   : 31.03.13
     %
-    %   Copyright : (C) 2011-2013 Евгений Прилепин
+    % Copyright : (C) 2011-2013 Evgeny Prilepin 
     % ---------------------------------------------------------------------
     
     properties (Access = public)
         
-        % Флаг определяет, будут ли блокироваться сигналы отправителя
+        % Flag defines whether the sender signals are blocked or unblocked.        
         %
-        % Если это свойство true, все сигналы отправителя будут блокироваться.
+        % If the flag value is "True", all sender signals will be blocked.
         %
-        % @note Анонимные сигналы (не имеющие отправителя) не блокируются.
+        % @note Anonymous signals (signals that do not have a sender) will
+        % not be blocked.
         %
         % @type logical @default false
         IsBlockSignals = false;
@@ -77,12 +78,12 @@ classdef Sender < dynamicprops
         % Public API Methods
 
         function varargout = signals(self)
-            % Возвращает или выводит в командное окно список сигналов объекта
+            % Returns a list of object signals or displays it in the command prompt window 
             %
-            % Метод возвращает список или выводит на экран список сигналов
-            % объекта.
+            % Method returns a list of object signals or displays it in 
+            % the command prompt window.
             %
-            % Использование::
+            % Usage::
             % @code
             %   self.signals()
             %   s = self.signals()
@@ -110,12 +111,12 @@ classdef Sender < dynamicprops
         end
         
         function varargout = createSignal(self, signalName, varargin)
-            % Создаёт новый сигнал в динамическом поле объекта отправителя
+            % Creates a new signal in the dynamic property of the object sender 
             %
-            % Метод создаёт сигнал и добавляет его в динамическое поле 
-            % объекта отправителя.
+            % Method creates a signal and adds it to the dynamic property  
+            % of the object sender.
             %
-            % Использование::
+            % Usage::
             % @code
             % self.createSignal(signalName)
             % self.createSignal(signalName, argTypess1, argTypess2, ...)
@@ -123,11 +124,12 @@ classdef Sender < dynamicprops
             % @endcode
             %
             % Parameters:
-            % signalName: Имя сигнала и динамического поля, в котором будет создан сигнал. @type char
-            % argTypes: Типы обязательных аргументов сигнала. @type cell
+            % signalName: Signal name and the name of the dynamic property
+            %             in which a signal will be created. @type char
+            % argTypes: Types of mandatory signal arguments. @type cell
             %
             % @sa
-            %   deleteSignal
+            % deleteSignal
             %
             
             narginchk(2, Inf)
@@ -139,8 +141,8 @@ classdef Sender < dynamicprops
             
             if (ismember(signalName, props) && ...
                 isa(self.(signalName), 'signals.Signal'))
-                % Если такое поле уже существует и является сигналом, то
-                % не создаём новый сигнал
+                % If there is a property and this property is a signal,
+                % then a new signal is not created
                 s = self.(signalName);
             else
                 s = signals.Signal(self, signalName, varargin{:});
@@ -152,21 +154,21 @@ classdef Sender < dynamicprops
         end
         
         function deleteSignal(self, signalOrName)
-            % Удаляет сигнал, созданный динамически в объекте отправителе
+            % Deletes dynamically created signal in the sender object 
             %
-            % Метод удаляет существующий сигнал, который был создан динамически
-            % и удаляет его поле из объекта. После удаления объект сигнала 
-            % будет разрушен.
+            % Method deletes the dynamically created signal and then 
+            % deletes its property from the object.  When the signal and
+            % the property are deleted, signal object shall be destroyed.
             %
-            % Использование::
+            % Usage::
             % @code
             % self.deleteSignal(signal)
             % self.deleteSignal(signalName)
             % @endcode
             %
             % Parameters:
-            % signal: Объект сигнала. @type Signal
-            % signalName: Имя сигнала. @type char
+            % signal: Signal object. @type Signal
+            % signalName: Signal name. @type char
             %
             % @sa
             %   createSignal
@@ -188,7 +190,7 @@ classdef Sender < dynamicprops
             end
             
             if (isempty(signalProp) || ~isa(signalProp, 'meta.DynamicProperty'))
-                % Может быть удалён сигнал, который был создан как динамическое свойство
+                % The signal created as a dynamic property can be deleted
                 return
             end
             
@@ -196,15 +198,16 @@ classdef Sender < dynamicprops
         end
         
         function createSignalsFromEvents(self)
-            % Создаёт сигналы в объекте отправителя с именами событий
+            % Creates signals in the sender object with the event names 
             %
-            % Метод создаёт динамические сигналы в объекте отправителя с 
-            % именами событий, существующих в этом объекте.
+            % Method creates dynamic signals in the sender object with
+            % the names of the events, existing in this object.
             %
             % @note
-            % Имена сигналов (и полей объекта) будут совпадать с именами событий.
+            % Signal names (and property names) will correspond to event
+            % names.
             %
-            % Использование::
+            % Usage::
             % @code
             % self.createSignalsFromEvents()
             % @endcode

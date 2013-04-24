@@ -1,46 +1,49 @@
 classdef Signal < handle
-    % Класс реализует сигнал
+    % Class implements signal 
     %
-    % Класс реализует функциональность сигнала.
-    % Механизм сигналов реализует шаблон проектирования "Observer".
-    % Сигналы подобны событиям (events), но более удобны в использовании и 
-    % функционально богаче событий. Реализованная парадигма сигналов подобна 
-    % парадигме сигналов и слотов в С++ библиотеке Qt.
+    % Class implements signal functionality. 
+    % Signal mechanism implements "Observer" design pattern. 
+    % Signals are similar to the events. However, it is more convenient to
+    % use signals than the events signals. Signals are functionally richer
+    % than the events. Implemented signal paradigm is
+    % similar to signals and slots paradigm in C++ Qt.
     %
-    % Особенности реализации сигналов::
-    % - Сигналы соединяются с приёмниками
-    % - Сигналы могут быть соединены с другими сигналами для передачи
-    %   по цепочке сигналов
-    % - Приёмников сигнала может быть неограниченное количество
-    % - Сигналы позволяют пересылать любое количество аргументов
-    % - Опционально могут быть заданы обязательные аргументы и типы 
-    %   обязательных аргументов.
-    % - Сигналы могут иметь или не иметь отправителя.
-    % - Если сигнал не имеет отправителя, такой сигнал считается анонимным
-    % - Сигнал может быть создан как анонимный, а затем получить отправителя
-    % - Отправитель может быть изменён в любой момент
-    % - Отправитель сигнала может быть только наследником класса Sender
-    % - При получении отправителя, сигнал регистрирует себя у отправителя и 
-    %   слушает его события
-    % - Сигнал может избавиться от отправителя, после чего удаляет себя у отправителя
-    % - Отправитель сам может удалить любой сигнал
-    % - При удалении отправителем, объект сигнала уничтожается
-    % - Сигнал может быть заблокирован отправителем если имеет его
+    % Signals implementation features::
+    % - Signals can be connected to the receivers.
+    % - Signals can be connected to other signals for their 
+    %   transmission through a signal chain
+    % - The number of receivers can be unlimited.
+    % - Signals allow resending any number of arguments.
+    % - Optionally, mandatory arguments as well as their types can be assigned.
+    % - Signals can have or cannot have a sender.
+    % - If a signal does not have a sender, the signal is considered to be
+    %   an anonymous signal.
+    % - Signal can be created as an anonymous signal and then a sender can
+    %   be assigned to a signal.
+    % - Sender can be changed at any time.
+    % - Signal sender can be only the entity inherited from Sender class
+    % - When a signal is assigned to a sender, the signal registers itself
+    % with the sender and listens to its events.
+    % - Having removed a sender, the signal deletes itself from a sender. 
+    % - Sender can delete signals.
+    % - When a sender deletes a signal, the signal instance will be deleted.
+    % - A signal can be blocked by a sender, in case if a signal has a senders.
     %
-    % Обработка исключений в приёмниках::
-    % Сигналы обрабатывают исключений, которые могут произойти в callback-функциях
-    % подключенных приёмников. При возникновении исключения в приёмнике, сигнал
-    % по умочланию сообщает об этом сообщением с информацией об ошибке, а
-    % так же вызывает функцию-обработчик ошибки, которая может быть задана
-    % пользователем. При возникновении исключения в одном из приёмников, сигнал
-    % продолжает высылаться для получения другими приёмниками.
+    % Exception handling in the receivers::
+    % Signals handle exceptions that can occur in the callback – functions
+    % of the enabled receivers. The exception appeared in one of the
+    % receivers, a signal, by default, informs about an error message and
+    % calls an error handler that can be specified by the user ErrorHandler
+    % class.
+    % The exception appeared in one of the receivers, the signal 
+    % continues being sent to other receivers to be obtained.
     %
-    % Использование::
+    % Usage::
     % @code
-    % % Создание анонимного сигнала с любыми высылаемыми аргументами
+    % % Creation of the anonymous signal with any passing arguments 
     % signal = signals.Signal()
     %
-    % % Подключение сигнала к приёмнику (создание нового приёмника)
+    % % Creating signal- receiver connection(the creation of a new receiver)
     % receiver = signal.connect(@(x) fprintf('Hello, %s\n', x))
     % signal.emit('World')
     % @endcode
@@ -50,22 +53,22 @@ classdef Signal < handle
     %
     
     % ---------------------------------------------------------------------
-    %   Проект    : M-Signals
-    %   Версия    : 1.0
-    %   Автор     : Евгений Прилепин
-    %   Создано   : 27.12.11
-    %   Обновлено : 31.03.13
+    % Project   : M-Signals
+    % Version   : 1.0
+    % Author    : Evgeny Prilepin 
+    % Created   : 27.12.11
+    % Updated   : 31.03.13
     %
-    %   Copyright : (C) 2011-2013 Евгений Прилепин
+    % Copyright : (C) 2011-2013 Evgeny Prilepin
     % ---------------------------------------------------------------------
     
     
     properties (GetAccess = public, SetAccess = private)
         
-        % Отправитель данного сигнала
+        % Signal sender
         %
-        % Объект, который является отправителем сигнала. Если не указан,
-        % сигнал является анонимным.
+        % Instance is a signal sender. If the instance is not specified 
+        % the signal is regarded to be an anonymous one. 
         %
         % @type Sender @default empty
         Sender
@@ -74,12 +77,12 @@ classdef Signal < handle
     
     properties (Dependent)
         
-        % Имя сигнала
+        % Signal name
         %
-        % Имя, c которым сигнал зарегистрирован у отправителя
-        % По сути является именем поля, которое хранит объект сигнала в
-        % объекте отправителя.
-        % Если сигнал анонимный, то Name = "@Anonymous"
+        % Name under which the signal has been registered in a sender. 
+        % In essence, signal name is a name of a field, containing signal 
+        % instance in the instance of a sender.
+        % If signal is anonymous then its Name = "@Anonymous"
         %
         % @type char @default empty
         Name = ''
@@ -88,10 +91,10 @@ classdef Signal < handle
     
     properties (Access = public)
  
-        % Описание сигнала
+        % Signal description
         %
-        % Строка описания сигнала. 
-        % Описание может быть задано пользователем.
+        % Signal description string.
+        % Description can be assigned by a user. 
         %
         % @type char @default empty
         Description = ''
@@ -100,16 +103,16 @@ classdef Signal < handle
     
     properties (GetAccess = public, SetAccess = private)
         
-        % Аргументы сигнала (строка)
+        % Signal arguments string
         %
-        % Строка с описанием обязательных аргументов сигнала и их типов
-        %
+        % String containing the description of signal mandatory arguments 
+        % and their types        
         % @type char
         Arguments
         
-        % Приёмники, соединённые с данным сигналом
+        % Receivers connected to this signal 
         %
-        % Массив приёмников, которые подключены к данному сигналу
+        % Receivers array connected to this signal 
         %
         % @type Receiver
         Receivers
@@ -118,45 +121,48 @@ classdef Signal < handle
     
     properties (Access = public)
         
-        % Обработчик ошибки при возникновении исключения в приёмниках
+        % The exception occurred in the receivers, the error handler 
         %
-        % Хранит ссылку на экземпляр класса, наследуемого от ErrorHandler. 
-        % Когда в любом приёмнике, подключенном к данному сигналу, произойдёт 
-        % исключение, будет вызван метод process этого класса.
+        % saves the reference to the instance class inherited from
+        % ErrorHandler.
+        % The exception occurred in the receiver connected to this signal,
+        % method "process" of this class is called.
+        % signal, method "process" of this class is called.
         %
-        % Сигнатура функции process:
-        %   process(exception, signal, receiver)
+        % “Process” function signature:
+        %   process (exception, signal, receiver)
         %
-        % Входные аргументы:
-        %   exception -- Объект MExceptions с информацией об исключении
-        %   signal    -- Объект сигнала
-        %   receiver  -- Объект приёмника, в котором произошло исключение
+        % Input arguments:
+        %   exception -- Object MExceptions containing the information
+        %                about the exception
+        %   signal    -- signal object
+        %   receiver  -- Receiver object in which the exception occurred 
         %
         % @note
-        %   Если в ReceiveErrorHandler происходит исключение, то дальнейшая
-        %   рассылка сигнала завершается с исключительной ситуацией.
+        %   Should the exception occur in ReceiveErrorHandler, the 
+        %   further signal emission stops.
         %
         % @type ErrorHandler
         ReceiveErrorHandler
         
-        % Флаг указывает, будут ли отображаться сообщения об ошибках в приёмниках
+        % Flag indicates the display of error messages in the receivers        
         %
-        % Если данный флаг установлен в true, то все ошибки, возникающие в
-        % приёмниках будут отображаться в командном окне.
+        % If the flag has value "True", all errors, occurring in the  
+        % receivers, will be displayed in the command window.
         %
         % @note
-        %   Флаг никак не влияет на обработчик ReceiveErrorHandler, который
-        %   всегда вызывается при ошибках в приёмника.
+        %   Flag does not influence ReceiveErrorHandler, error handler, 
+        %   always called with errors in the receiver.
         %
         % @type logical @default true
         IsEnabledDisplayReceiveErrors = true
         
-        % Флаг определяет, будет ли сигнал высылаться напрямую без
-        % использования системы событий (Events)
+        % Flag indicates whether a signal has been emitted directly
+        % without the event-driven system. (Events)
         %
-        % Если данный флаг установлен в true, то сигнал будет высылаться
-        % прямым вызовом функции высылки сигнала, а не через генерацию
-        % события Emit.
+        % If the flag has value "True", then the signal will be called 
+        % directly by signal emission function, but not through the 
+        % generation of the event Emit.
         %
         % @type logical @default false
         IsDirectEmit = false
@@ -165,10 +171,12 @@ classdef Signal < handle
     
     properties (Dependent)
         
-        % Флаг определят состояние сигнала вкл/выкл
+        % Flag indicates whether the signal is enabled or disabled 
         %
-        % Если значение флага true, то включенные приёмники будут его принимать,
-        % если значение флага false, то включенные приёмники не будут его принимать.
+        % If the flag value is "True", then enabled receivers will receive
+        % the signal.
+        % if the flag value is "False", then the enabled receivers will not
+        % receive the signal.
         %
         % @type logical @default true
         IsEnabled
@@ -198,11 +206,11 @@ classdef Signal < handle
     methods
         
         function self = Signal(varargin)
-            % Конструктор
+            % Constructor
             %
-            % Создаёт экземпляр сигнала.
+            % creates signal instance
             %
-            % Использование::
+            % Usage::
             % @code
             % signal = Signal()
             % signal = Signal(sender)
@@ -213,11 +221,12 @@ classdef Signal < handle
             % @endcode
             %
             % Parameters:
-            %   sender: Объект отправителя @type Sender
-            %   name: Имя сигнала, которое будет определно как property в sender @type char
-            %   argTypes: Типы обязательных аргументов сигнала @type cell
+            %   sender: Sender’s object @type Sender
+            %   name: Signal name that will be defined as "property" in
+            %         sender @type char
+            %   argTypes: Types of signal mandatory arguments @type cell
             %
-            
+
             narginchk(0, Inf)
             
             argsNum = 0;
@@ -254,23 +263,25 @@ classdef Signal < handle
         end
         
         function setSender(self, sender, name)
-            % Устанавливает для сигнала отправителя
+            % Sets up a sender
             %
-            % Метод задаёт сигналу отправителя. Если сигнал уже имеет 
-            % отправителя, он будет сменён на задаваемого, т.к. сигнал не
-            % может иметь нескольких отправителей.
-            % Если вторым аргументом задаётся имя, сигнал будет добавлен
-            % в объект отправителя как динамическое поле с именем name.
+            % The method sets up a sender. If a signal has a sender, 
+            %, the sender will be replaced by a newly defined one, 
+            % as a signal cannot have several senders.            
+
+            % If the second argument sets up a signal name, the signal will
+            % be added to the sender’s instance as a dynamic field under
+            % the name "name".
             %
-            % Использование::
+            % Usage::
             % @code
             % obj.setSender(sender, name)
             % obj.setSender(sender)
             % @endcode
             %
             % Parameters:
-            %   sender: Объект отправителя. Должен наследоваться от Sender
-            %   name: Имя поля в объекте отправителя, в которое будет добавлен сигнал
+            %   sender: Sender’s object shall be inherited from Sender 
+            %   name: Field name in the sender’s instance, signal shall be added to this field
             %
             % @sa removeSender
             %
@@ -299,7 +310,8 @@ classdef Signal < handle
             self.signalUnblockedListener = addlistener(sender, 'SignalsUnblocked', @(varargin)self.blockSignal(false));
             
             if ~isempty(name)
-                % Если указано имя сигнала, то регистрируем сигнал у отправителя
+                % If signal name is specified, signal is registered with
+                % the sender
                 prop = sender.findprop(name);
                 
                 if isempty(prop)
@@ -326,12 +338,13 @@ classdef Signal < handle
         end
         
         function removeSender(self)
-            % Удаляет сигнал у отправителя
+            % Deletes signal from sender 
             %
-            % Метод удаляет ссылку на сигнал у текущего отправителя.
-            % Это действие делает сигнал анонимным.
+            % The method deletes the reference to a single from the current
+            % sender.
+            % This action makes signal anonymous.
             %
-            % Использование::
+            % Usage::
             % @code
             % obj.removeSender()
             % @endcode
@@ -351,30 +364,30 @@ classdef Signal < handle
         end
         
         function setRequiredArgs(self, varargin)
-            % Устанавливает количество и типы обязательных аргументов сигнала
+            % Sets up the number and type of signal mandatory arguments 
             %
-            % Метод устанавливает количество и тип обязательных аргументов,
-            % которые будут переданы при испускании сигнала.
+            % The method sets up the number and type of signal mandatory
+            % arguments that will be transmitted with the signal emission. 
             %
-            % Использование::
+            % Usage::
             % @code
-            %   % сигнал может испускаться с любым количеством аргументов любого типа
+            %   % Signal can be emitted with any number of arguments of any type.
             %   self.setRequiredArgs()
             %
-            %   % сигнал может испускаться с заданным количеством аргументов заданного типа
+            %   % Signal can be emitted with a specified number of arguments of a specified type. 
             %   self.setRequiredArgs(typeArg1, typeArg2, ..., typeArgN)
             %
-            %   % сигнал может испускаться с заданным количеством аргументов любого из перечисленных типов
+            %   % Signal can be emitted with a specified number of arguments of the following type 
             %   self.setRequiredArgs({type1Arg1, type2Arg1, ..., typeNArg1}, ...)
             %
-            %   % сигнал может испускаться с заданным количеством аргументов любого типа
+            %   % Signal can be emitted with a specified number of arguments of any type 
             %   self.setRequiredArgs({}, {}, ..., {})
             %
-            %   % сигнал может испускаться с любым количеством аргументов любого типа, следующих после обязательных
+            %   % Signal can be emitted with any number of arguments of any type, following the mandatory arguments 
             %   self.setRequiredArgs(..., varargin)
             % @endcode
             %
-            % Примеры::
+            % Examples::
             % @code
             %   signal.setRequiredArgs()
             %   signal.setRequiredArgs('numeric')
@@ -427,15 +440,16 @@ classdef Signal < handle
         end
         
         function emit(self, varargin)
-            % Испускает сигнал
+            % Emits signal
             %
-            % Метод испускает сигнал с заданными аргументами.
-            % Количество и тип аргументов зависят от сигнатуры сигнала.
+            % The method emits signal with specified arguments
+            % The number and type of arguments depend on the signal
+            % signature.
             % @n
-            % Все приёмники сигнала, которые включены, (callback-функции) 
-            % будут вызваны.
+            % All enabled signal receivers (callback function) 
+            % will be called.
             % 
-            % Использование::
+            % Usage::
             % @code
             % self.emit()
             % self.emit(...)
@@ -456,21 +470,22 @@ classdef Signal < handle
         end
         
         function varargout = connect(self, receiverOrCallback, isEnabled)
-            % Подключает приёмник к сигналу
+            % Connects the receiver to the signal
             %
-            % Метод подключает приёмник к данному сигналу.
-            % Если в качестве входного аргумента задана callback-функция или
-            % сигнал, то метод создаёт новый приёмник, если задан объект приёмника,
-            % метод добавляет его в список подключенных приёмников если его
-            % там ещё нет.
+            % The method connects the receiver to the signal.
+            % If the input argument is defined as a callback-function or 
+            % a signal, method creates a new receiver; if the input
+            % argument is, specified as the instance of a receiver, method
+            % adds it to its list of connected receivers if this argument
+            % has not been added earlier.
             %
             % @warning
-            % Если сигнал соединяется с другим сигналом, оба сигнала должны
-            % быть согласованы по своим аргументам, т.е. у них должна быть
-            % одинаковая сигнатура, иначе испускание подключенного сигнала 
-            % завершится с ошибкой.
+            % If a signal connects to the other signal, both signals
+            % shall be conformed to arguments, i.e. they must have the 
+            % same signature, otherwise, 
+            % the signal emission will fail.
             %
-            % Использование::
+            % Usage::
             % @code
             %   self.connect(receiver)
             %   self.connect(callback)
@@ -481,21 +496,23 @@ classdef Signal < handle
             % @endcode
             %
             % Parameters:
-            % receiver:  Объект уже созданного приёмника. @type Receiver
-            % callback:  указатель на функцию, которая будет 
-            %            вызываться при испускании сигнала @type function_handle
-            % signal:    Объект другого сигнала, который будет пересылать
-            %            сигнал, испущенный этим сигналом.
-            % isEnabled: Флаг указывает, будет ли включен приемник при подключении.
-            %            Имеет силу толкьо если в качестве первого аргумента передаётся
-            %            callback-функция. @type logical @default true
+            % receiver:  The object of the created receiver. @type Receiver
+            % callback:  function handle is called with the signal emission 
+            %            @type function_handle
+            % signal:    The object of the other signal is to transmit 
+            %            signal emitted by this signal  
+            % isEnabled: Flag indicates whether the receiver is enabled or
+            %            disabled.
+            %            Flag value is ignored if first argument is not the
+            %            callback function. @type logical @default true
             %
             % Return values:
-            % receiver: Ссылка на объект созданного приёмника @type Receiver
+            % receiver: the reference to the object of the created receiver
+            %           @type Receiver
             %
             % @sa disconnect, emit
             %
-            
+
             narginchk(2, 3)
             nargoutchk(0, 1)
             
@@ -544,19 +561,19 @@ classdef Signal < handle
         end
         
         function disconnect(self, receiver)
-            % Отсоединяет приёмник от сигнала
+            % Disconnects receiver from a signal
             %
-            % Метод отсоединяет приёмник от сигналов и удаляет его из 
-            % списка приёмников. Отключенный приёмник уничтожается.
+            % The method disconnects the receiver from signals and 
+            % deletes it from the list of receivers.
             %
-            % Использование::
+            % Usage::
             % @code
             % self.disconnect(receiver)
             % @endcode
             %
             % Parameters:
-            % receiver: Приёмник сигнала, который зарегистрирован для 
-            %           данного сигнала @type Receiver
+            % receiver: Signal receiver registered for 
+            %           this signal @type Receiver
             %
             % @sa connect
             %
@@ -570,11 +587,11 @@ classdef Signal < handle
         end
         
         function clearConnections(self)
-            % Очищает все соединения сигнала с приёмниками
+            % Clears all signal-receiver connections 
             %
-            % Метод удаляет все приёмники, подключенные к данному сигналу.
+            % The method deletes all receivers connected to the signal.
             %
-            % Использование::
+            % Usage::
             % @code
             % self.clearConnections()
             % @endcode
@@ -592,7 +609,7 @@ classdef Signal < handle
     methods (Access = private)
         
         function emitProxy(self)
-            % Рассылает сигнал подключенным приёмникам
+            % Sells signal to enabled receivers
             
             receivers = self.Receivers;
             data = self.emitData;
@@ -604,13 +621,13 @@ classdef Signal < handle
             
             try
                 if ~isinf(self.argsCount)
-                    % Определённое количество аргументов с заданными типами
+                    % Definite number of arguments of a specified type
                     if (numel(data) < self.argsCount)
                         error('signals:emittedArgs', ...
                             'Must be a minimum %d emitted arguments.', self.argsCount);
                     end
                     
-                    % Проверяются только обязательыне аргументы
+                    % Only mandatory arguments are to be checked
                     classes = self.argsClasses;
                     
                     for i = 1:self.argsCount
@@ -658,27 +675,27 @@ classdef Signal < handle
         end
         
         function deleteReceiver(self, receiver)
-            % Удаляет приёмник из списка подключенных приёмников
+            % Deletes the receiver from the list of connected receivers
             
             i = arrayfun(@(x) receiver==x, self.Receivers);
             self.Receivers(i) = [];
         end
         
         function tf = isReceiverConnected(self, receiver)
-            % Возвращает true если приёмник уже подключен
+            % Returns "True" if the receiver has been already connected
             
             tf = ismember(receiver, self.Receivers);
         end
         
         function blockSignal(self, flag)
-            % Блокирует/разблокирует сигнал
-            % Callback слушает события из Sender
+            % Blocks/unblocks signal
+            % Callback listens to the events from Sender
             
             self.isBlockSignal = flag;
         end
         
         function receiveExceptionHandler(self, exception, receiver)
-            % Обработка исключения в callback функции приёмника
+            % Exception handling in the receiver’s callback function
             
             if self.IsEnabledDisplayReceiveErrors
                 self.dispReceiveExceptionInfo(exception)
@@ -692,19 +709,19 @@ classdef Signal < handle
         end
         
         function dispReceiveExceptionInfo(self, e)
-            % Выводит на экран сообщение об исключении
+            % Displays error message
             
-            % Убираем лишнюю информацию, полученную из стека
+            % Remove odd information from the stack
             exceptionInfo = regexprep(e.getReport(), ...
                 ['\nError in <a href="matlab:helpUtils.', ...
                 'errorDocCallback(''signals\.Receiver.*$'], '');
             
             if self.isAnonymous
                 fprintf(2, ['The error has occurred in the callback function ', ...
-                    'of the receiver connected with the anonymous signal:\n']);
+                    'of the receiver connected to the anonymous signal:\n']);
             else
                 fprintf(2, ['The error has occurred in the callback function ', ...
-                    'of the receiver connected with the signal "%s" of sender "%s":\n'], ...
+                    'of the receiver connected to the signal "%s" of sender "%s":\n'], ...
                     self.Name, class(self.Sender));
             end
             
@@ -795,4 +812,3 @@ classdef Signal < handle
     end
     
 end % signals.Signal
-

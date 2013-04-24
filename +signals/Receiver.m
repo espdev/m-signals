@@ -1,17 +1,18 @@
 classdef Receiver < handle
-    % Класс реализует приёмник сигналов
+    % Class implements signal receiver.
     %
-    % Класс реализует функциональность приёмника сигналов.
-    % Этот класс используется совместно с классом Signal.
+    % Class implements signal receiver functionality.
+    % Class is used alongside with the Signal class.
     %
-    % Особенности реализации приёмника::
-    % - Приёмник может быть подключен к нескольким сигналам одновременно.
-    % - Приёмник может быть включен и отключен для приёма сигналов
-	% - Исключение в callback-функции приёмника не останавливает рассылку 
-    %   сигнала другим приёмникам (поведение может зависеть от параметров сигнала)
-    % - В приёмнике может быть определен функция-handler для обработки исключений
+    % Receiver implementation features::
+    % - Receiver can be connected to several signals simultaneously.
+    % - Receiver can be enabled or disabled to receive signals.
+    % - The exception in the callback-function of the receiver does not
+    %   stop the signal sending to other
+    %   receivers (the described behavior may depend on signal parameters)
+    % - User class ErrorHandler shall be defined for exception handling. 
     %
-    % Использование::
+    % Usage::
     % @code
     % signal = signals.Signal();
     % receiver = signals.Receiver(@(varargin) disp('Hello, Receiver!'));
@@ -24,47 +25,56 @@ classdef Receiver < handle
     %
     
     % ---------------------------------------------------------------------
-    %   Проект    : M-Signals
-    %   Версия    : 1.0
-    %   Автор     : Евгений Прилепин
-    %   Создано   : 27.12.11
-    %   Обновлено : 23.01.13
-    %
-    %   Copyright : (C) 2011-2013 Евгений Прилепин
+    % Project   : M-Signals
+    % Version   : 1.0
+    % Author    : Evgeny Prilepin
+    % Created   : 27.12.11
+    % Updated   : 23.01.13
+    % Copyright : (C) 2011-2013 Evgeny Prilepin 
     % ---------------------------------------------------------------------
-    
+
     properties (Access = public)
         
-        % Указатель на callback-функцию
+        % Callback function handle
         %
-        % Указатель на функцию или метод класса, который будет выполнен при
-        % испускании сигнала, который принимает приёмник.
+        % Function handle or class method handle is executed 
+        % when the signal is emitted to be obtained by a receiver.  
         %
         % @type function_handle
         Callback
         
-        % Callback-функция, вызываемая при возникновении исключения в данном приёмнике
+        % Reference to the instance of the user class ErrorHandler
+        % containing the process function called when the exception has
+        % occurred in a receiver
         %
-        % Хранит ссылку на экземпляр класса, наследуемого от ErrorHandler. 
-        % Когда в приёмнике, подключенном к некоторому сигналу, произойдёт 
-        % исключение при генерации сигнала, будет вызван метод process этого класса.
+        % Property keeps the reference to the class instance inherited from
+        % ErrorHandler.
+        % If the exception has occurred in a receiver connected to a signal
+        % during signal generation, the method “process” of this class is
+        % called.
         %
-        % Сигнатура функции process:
-        %   process(exception, signal, receiver)
+        % "Process" function signature:
+        %   process (exception, signal, receiver)
         %
-        % Входные аргументы:
-        %   exception -- Объект MExceptions с информацией об исключении
-        %   signal    -- Объект сигнала, который принимался в момент возникновения исключения
-        %   receiver  -- Объект приёмника, в котором произошло исключение
+        % Input arguments:
+        %   exception -- MException object, containing the information
+        %                about an exception
+        %   signal    -- The object of the signal that was receiving when
+        %                the exception has occurred
+        %   receiver  -- The object of the receiver, in which the exception
+        %                has occurred
         %
         % @note
-        %   Если в ReceiveErrorHandler происходит исключение, то информация о
-        %   нем выводится в командное окно, но оно не перехватывается на уровне сигнала.
+        %   If the exception has occurred in ReceiveErrorHandler, the
+        %   information about the exception
+        %   shall be displayed in the command prompt window. The exception
+        %   is not caught at signal level.
         %
         % @type ErrorHandler
         ReceiveErrorHandler
         
-        % Флаг определяет, включен ли данный приёмник на получение сигнала
+        % Flag determines whether the receiver is enabled or disabled to
+        % receive a signal
         %
         % @type logical @default true
         IsEnabled
@@ -76,18 +86,19 @@ classdef Receiver < handle
         % Public API methods
         
         function self = Receiver(callback, isEnabled)
-            % Конструктор
+            % Constructor
             %
-            % Создаёт экземпляр класса Receiver.
+            % Creates Receiver class instance.
             %
-            % Использование::
+            % Usage::
             %   self = Receiver(callback)
             %   self = Receiver(callback, isEnabled)
             %
             % Parameters:
-            %   callback: Указатель на функцию, которая будет выполнена 
-            %             при испускании сигнала @type function_handle
-            %   isEnabled: Флаг определяет, включен ли приёмник. @type logical @default true
+            %   callback:  Handler to function that will be performed when 
+            %              signal is emitted @type function_handle
+            %   isEnabled: Flag determines whether receiver is enables or
+            %              disabled. @type logical @default true 
             %
             
             narginchk(1, 2);
@@ -105,17 +116,17 @@ classdef Receiver < handle
         end
         
         function receive(self, signal, varargin)
-            % Принимает испущенный сигнал
+            % Receives the emitted signal 
             %
-            % Метод принимает сигнал и выполняет функцию, заданную в 
-            % Callback если IsEnabled = true.
+            % Method receives a signal and performs a function specified in 
+            % Callback if IsEnabled = true.
             %
-            % Использование::
+            % Usage ::
             %   self.receive(signal, varargin)
             %
             % Parameters:
-            %   signal -- объект принимаемого сигнала
-            %   varargin -- аргументы принимаемого сигнала
+            %   signal: object of the receiving signal 
+            %   varargin: arguments of the receiving signal 
             %
             
             if ~self.IsEnabled
@@ -135,8 +146,9 @@ classdef Receiver < handle
             catch re
                 if strcmp(re.identifier, 'MATLAB:maxrhs')
                     % EXCEPTION: "Too many input arguments".
-                    % Убираем по одному аргументу с конца, чтобы в итоге
-                    % вызвать функцию с требуемым количеством аргументов.
+                    % Remove arguments one by one from the end to
+                    % call eventually the function with the required number
+                    % of arguments.
                     inputs = inputs(1:end-1);
                     self.receive(signal, inputs{:});
                 else
@@ -144,7 +156,7 @@ classdef Receiver < handle
                         self.ReceiveErrorHandler.process(re, signal, self)
                     catch he
                         fprintf(2, ['Error in "ReceiveErrorHandler" in the ', ...
-                            'receiver connected with the signal "%s":\n'], ...
+                            'receiver connected to the signal "%s":\n'], ...
                             signal.Name);
                         fprintf(2, '%s\n', he.getReport());
                     end
@@ -160,7 +172,7 @@ classdef Receiver < handle
     methods (Access = private)
         
         function args = getCallbackArgs(self, varargin)
-            % Определяет аргументы сигнала, которые могут быть переданы в Callback
+            % Defines signal arguments that can be transmitted to Callback
             
             args = varargin;
             
@@ -173,15 +185,15 @@ classdef Receiver < handle
             end
             
             if (argsMax == 0)
-                % Callback не принимает аргументов
+                % Callback does not receive arguments
                 args = {};
                 
             elseif (argsMax < 0)
-                % Callback принимает varargin
+                % Callback receives varargin
                 return
                 
             elseif (argsMax > 0)
-                % Callback принимает определённое кол. аргументов
+                % Callback receives the definite number of arguments
                 args = args(1:min(numel(args), argsMax));
             end
         end
@@ -209,4 +221,3 @@ classdef Receiver < handle
     end % Properties Getters/Setters
     
 end % signals.Receiver
-
