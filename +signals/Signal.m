@@ -30,7 +30,7 @@ classdef Signal < handle
     % - A signal can be blocked by a sender, in case if a signal has a senders.
     %
     % Exception handling in the receivers::
-    % Signals handle exceptions that can occur in the callback – functions
+    % Signals handle exceptions that can occur in the callback functions
     % of the enabled receivers. The exception appeared in one of the
     % receivers, a signal, by default, informs about an error message and
     % calls an error handler that can be specified by the user ErrorHandler
@@ -43,7 +43,7 @@ classdef Signal < handle
     % % Creation of the anonymous signal with any passing arguments 
     % signal = signals.Signal()
     %
-    % % Creating signal- receiver connection(the creation of a new receiver)
+    % % Creating signal receiver connection(the creation of a new receiver)
     % receiver = signal.connect(@(x) fprintf('Hello, %s\n', x))
     % signal.emit('World')
     % @endcode
@@ -129,7 +129,7 @@ classdef Signal < handle
         % method "process" of this class is called.
         % signal, method "process" of this class is called.
         %
-        % “Process” function signature:
+        % "process" function signature:
         %   process (exception, signal, receiver)
         %
         % Input arguments:
@@ -221,7 +221,7 @@ classdef Signal < handle
             % @endcode
             %
             % Parameters:
-            %   sender: Sender’s object @type Sender
+            %   sender: Sender's object @type Sender
             %   name: Signal name that will be defined as "property" in
             %         sender @type char
             %   argTypes: Types of signal mandatory arguments @type cell
@@ -270,7 +270,7 @@ classdef Signal < handle
             % as a signal cannot have several senders.            
 
             % If the second argument sets up a signal name, the signal will
-            % be added to the sender’s instance as a dynamic field under
+            % be added to the sender's instance as a dynamic field under
             % the name "name".
             %
             % Usage::
@@ -280,8 +280,8 @@ classdef Signal < handle
             % @endcode
             %
             % Parameters:
-            %   sender: Sender’s object shall be inherited from Sender 
-            %   name: Field name in the sender’s instance, signal shall be added to this field
+            %   sender: Sender's object shall be inherited from Sender 
+            %   name: Field name in the sender's instance, signal shall be added to this field
             %
             % @sa removeSender
             %
@@ -695,7 +695,7 @@ classdef Signal < handle
         end
         
         function receiveExceptionHandler(self, exception, receiver)
-            % Exception handling in the receiver’s callback function
+            % Exception handling in the receiver's callback function
             
             if self.IsEnabledDisplayReceiveErrors
                 self.dispReceiveExceptionInfo(exception)
