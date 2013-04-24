@@ -50,7 +50,7 @@ classdef Receiver < handle
         % Property keeps the reference to the class instance inherited from
         % ErrorHandler.
         % If the exception has occurred in a receiver connected to a signal
-        % during signal generation, the method “process” of this class is
+        % during signal generation, the method "process" of this class is
         % called.
         %
         % "Process" function signature:
