@@ -356,11 +356,11 @@ classdef Signal < handle
                 return
             end
             
-            self.Sender = [];
-            
             delete(self.senderProp)
             delete(self.signalBlockedListener)
             delete(self.signalUnblockedListener)
+            
+            self.Sender = [];
         end
         
         function setRequiredArgs(self, varargin)
@@ -676,6 +676,10 @@ classdef Signal < handle
         
         function deleteReceiver(self, receiver)
             % Deletes the receiver from the list of connected receivers
+            
+            if ~isvalid(self)
+                return
+            end
             
             i = arrayfun(@(x) receiver==x, self.Receivers);
             self.Receivers(i) = [];
