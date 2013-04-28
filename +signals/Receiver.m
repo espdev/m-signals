@@ -134,6 +134,10 @@ classdef Receiver < handle
             end
             
             try
+                % Set up receiving context data
+                context = signals.ReceivingContext.getContext();
+                context.setData(signal, self);
+                
                 inputs = varargin;
                 
                 if isempty(varargin)
@@ -143,6 +147,8 @@ classdef Receiver < handle
                 
                 args = self.getCallbackArgs(varargin{:});
                 self.Callback(args{:});
+                
+                context.clear();
             catch re
                 if strcmp(re.identifier, 'MATLAB:maxrhs')
                     % EXCEPTION: "Too many input arguments".
@@ -152,6 +158,8 @@ classdef Receiver < handle
                     inputs = inputs(1:end-1);
                     self.receive(signal, inputs{:});
                 else
+                    context.clear();
+                    
                     try
                         self.ReceiveErrorHandler.process(re, signal, self)
                     catch he
